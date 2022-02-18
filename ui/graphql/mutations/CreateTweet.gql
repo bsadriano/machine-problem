@@ -1,0 +1,10 @@
+mutation ($user_id: ID  !, $body: String!) {
+  createTweet(user_id: $user_id, body: $body) {
+    id
+    user {
+      id
+      username
+    }
+    body
+  }
+}

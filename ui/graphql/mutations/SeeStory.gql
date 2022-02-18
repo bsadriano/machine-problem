@@ -1,0 +1,3 @@
+mutation($story_id: ID, $user_id: ID) {
+  seeStory(story_id: $story_id, user_id: $user_id)
+}

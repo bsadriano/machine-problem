@@ -1,0 +1,15 @@
+query ($auth_user_id: ID!, $username: String!) {
+  userProfile(auth_user_id: $auth_user_id, username: $username) {
+    user {
+      id
+      username
+      email
+      name
+      avatar
+      created_at
+    }
+    can_edit
+    can_follow
+    is_following
+  }
+}

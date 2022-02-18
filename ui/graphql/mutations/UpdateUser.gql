@@ -1,0 +1,22 @@
+mutation (
+  $id: ID!
+  $name: String
+  $username: String
+  $avatar: Upload
+  $email: String
+  $password: String
+  $password_confirmation: String
+) {
+  updateUser(
+    id: $id
+    name: $name
+    username: $username
+    avatar: $avatar
+    email: $email
+    password: $password
+    password_confirmation: $password_confirmation
+  ) {
+    id
+    username
+  }
+}

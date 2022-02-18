@@ -1,0 +1,175 @@
+"A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+scalar Upload
+  @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Upload")
+
+"Indicates what fields are available at the top level of a query operation."
+type Query {
+    "Find a single user by an identifying attribute."
+    user(
+      "Search by primary key."
+      id: ID @eq @rules(apply: ["prohibits:username", "required_without:username"])
+
+      "Search by username."
+      username: String @eq @rules(apply: ["prohibits:id", "required_without:id"])
+    ): User @find
+
+    "List multiple users."
+    users(
+      "Filters by name. Accepts SQL LIKE wildcards `%` and `_`."
+      name: String @where(operator: "like")
+    ): [User!]! @paginate(defaultCount: 5)
+
+    timeline (
+      "Search by username."
+      auth_user_id: ID
+      username: String
+    ) : [Tweet!]! @paginate(defaultCount: 10, builder: "App\\Models\\User@timeline")
+
+    timeline (
+      auth_user_id: ID
+      "Search by username."
+      username: String
+    ) : [Tweet!]! @paginate(defaultCount: 10, builder: "App\\Models\\User@timeline")
+
+    tweets: [Tweet] @all
+    someComplexQuery(search: String!): [Tweet]
+    follows (
+      id: Int!
+    ): [User!]!
+
+    userProfile(
+      auth_user_id: ID
+      username: String
+    ) : UserProfile
+
+    stories (
+      auth_user_id: ID
+    ) : [Story]
+}
+
+type Mutation {
+  createTweet(
+    user_id: ID! @rules(apply: ["required"])
+    body: String @rules(apply: ["required", "max:255"])
+  ): Tweet @create
+
+  likeTweet (
+    tweet_id: ID! @rules(apply: ["required"])
+    user_id: ID! @rules(apply: ["required"])
+  ): Tweet 
+
+  unlikeTweet (
+    tweet_id: ID! @rules(apply: ["required"])
+    user_id: ID! @rules(apply: ["required"])
+  ): Tweet
+
+  dislikeTweet (
+    tweet_id: ID! @rules(apply: ["required"])
+    user_id: ID! @rules(apply: ["required"])
+  ): Tweet 
+
+  follow (
+    auth_user_id: ID
+    username: String
+    is_following: Boolean
+  ): Boolean
+
+  updateUser(
+    id: ID! @rules(apply: ["required"])
+    username: String
+    name: String
+    email: String
+    avatar: Upload
+    password: String
+    password_confirmation: String
+  ): User
+
+  seeStory(
+    story_id: ID
+    user_id: ID
+  ): Boolean
+
+  createStory(
+    user_id: ID! @rules(apply: ["required"])
+    body: String @rules(apply: ["required", "max:255"])
+  ): StoryDB @create(model: "App\\Models\\Story")
+
+  commentOnStory(
+    story_id: ID! @rules(apply: ["required"])
+    user_id: ID! @rules(apply: ["required"])
+    body: String @rules(apply: ["required", "max:255"])
+  ): Comment @create
+}
+
+"Account of a person who utilizes this application."
+type User {
+    "Unique primary key."
+    id: ID!
+
+    "Unique username."
+    username: String!
+
+    "Non-unique name."
+    name: String!
+
+    "User avatar."
+    avatar: String!
+
+    "Unique email address."
+    email: String!
+
+    "When the email was verified."
+    email_verified_at: DateTime
+
+    "When the account was created."
+    created_at: String!
+
+    "When the account was last updated."
+    updated_at: String!
+
+    following: Boolean
+}
+
+type Tweet {
+  id: ID!
+  user: User! @belongsTo
+  name: String
+  body: String
+  likes: Int
+  dislikes: Int
+  is_liked: Boolean
+  is_disliked: Boolean
+}
+
+type UserProfile {
+  user: User
+  can_edit: Boolean
+  can_follow: Boolean
+  is_following: Boolean
+}
+
+type Post {
+  story_id: ID
+  text: String
+  seen: Boolean
+}
+
+type Story {
+  user: String
+  posts: [Post]
+}
+
+type StoryDB {
+  id: ID
+  user: User
+  body: String
+}
+
+type Comment {
+  id: ID
+  story: StoryDB
+  user: User
+  body: String
+}

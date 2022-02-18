@@ -1,0 +1,18 @@
+query ($auth_user_id: ID, $username: String) {
+  timeline(auth_user_id: $auth_user_id, username: $username) {
+    data {
+      id
+      body
+      likes
+      dislikes
+      is_liked
+      is_disliked
+      user {
+        id
+        username
+        name
+        avatar
+      }
+    }
+  }
+}

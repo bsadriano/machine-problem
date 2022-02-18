@@ -1,0 +1,5 @@
+mutation ($story_id: ID!, $user_id: ID!, $body: String) {
+  commentOnStory(story_id: $story_id, user_id: $user_id, body: $body) {
+    id
+  }
+}

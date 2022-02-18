@@ -1,0 +1,10 @@
+query ($auth_user_id: ID!) {
+  stories(auth_user_id: $auth_user_id) {
+    user
+    posts {
+      story_id
+      text
+      seen
+    }
+  }
+}

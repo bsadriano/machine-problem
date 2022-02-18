@@ -1,0 +1,5 @@
+mutation ($tweet_id: ID!, $user_id: ID!) {
+  unlikeTweet(tweet_id: $tweet_id, user_id: $user_id) {
+    id
+  }
+}

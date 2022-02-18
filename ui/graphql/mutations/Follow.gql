@@ -1,0 +1,7 @@
+mutation ($auth_user_id: ID, $username: String, $is_following: Boolean) {
+  follow(
+    auth_user_id: $auth_user_id
+    username: $username
+    is_following: $is_following
+  )
+}
